@@ -15,7 +15,6 @@ RUN set -x; \
             python3-dev \
             libevent-dev \
             libssl-dev \
-            lxml \
             libxml2-dev \
             libxslt1-dev \
             libjpeg-dev \
@@ -24,7 +23,6 @@ RUN set -x; \
             libtiff5-dev \
             tk-dev \
             tcl-dev \
-            psutil \
             linux-headers-amd64 \
             libldap2-dev \
             libsasl2-dev \
