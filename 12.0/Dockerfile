@@ -92,6 +92,9 @@ RUN set -x;\
     && npm install -g rtlcss \
     && rm -rf /var/lib/apt/lists/*
 
+# Grab latest git            //-- to `pip install` customized python packages & apply patches
+RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends git-core
+
 # Install Odoo
 ENV ODOO_VERSION 12.0
 ENV ODOO_BASEPATH /etc/odoo
