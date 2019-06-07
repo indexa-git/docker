@@ -104,15 +104,20 @@ ENV ODOO_BASEPATH /etc/odoo
 RUN git clone --depth=1 -b ${ODOO_VERSION} https://github.com/odoo/odoo.git ${ODOO_BASEPATH}
 RUN pip install -r ${ODOO_BASEPATH}/requirements.txt
 
+# Create odoo user and group
+ENV ODOO_USER odoo
+RUN addgroup --system ${ODOO_USER}
+RUN adduser --system --ingroup ${ODOO_USER} --home ${ODOO_BASEPATH} --disabled-login --shell /sbin/nologin ${ODOO_USER}
+
 # Copy entrypoint script and Odoo configuration file
 RUN pip3 install num2words xlwt
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc
-RUN chown odoo /etc/odoo.conf
+RUN chown ${ODOO_USER} /etc/odoo.conf
 
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN mkdir -p /mnt/extra-addons \
-        && chown -R odoo /mnt/extra-addons
+        && chown -R ${ODOO_USER} /mnt/extra-addons
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
 
 # Expose Odoo services
