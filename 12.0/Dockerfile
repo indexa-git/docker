@@ -95,6 +95,9 @@ RUN set -x;\
 # Grab latest git            //-- to `pip install` customized python packages & apply patches
 RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends git-core
 
+# Grab latest pip
+RUN curl --silent --show-error --location https://bootstrap.pypa.io/get-pip.py | python3 /dev/stdin --no-cache-dir
+
 # Install Odoo
 ENV ODOO_VERSION 12.0
 ENV ODOO_BASEPATH /etc/odoo
