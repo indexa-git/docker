@@ -114,7 +114,7 @@ RUN pip3 install num2words xlwt
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc
 RUN chown ${ODOO_USER} /etc/odoo.conf
-RUN chown -R ${ODOO_USER}:${ODOO_USER} /var/lib/odoo
+RUN mkdir /var/lib/odoo && chown -R ${ODOO_USER}:${ODOO_USER} /var/lib/odoo
 
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN mkdir -p /mnt/extra-addons \
