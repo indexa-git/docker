@@ -24,7 +24,7 @@ check_config "db_user" "$USER"
 check_config "db_password" "$PASSWORD"
 
 case "$1" in
-    -- | odoo)
+    -- | odoo | /etc/odoo/odoo-bin)
         shift
         if [[ "$1" == "scaffold" ]] ; then
             exec /etc/odoo/odoo-bin "$@"
