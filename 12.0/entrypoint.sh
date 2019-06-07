@@ -27,13 +27,13 @@ case "$1" in
     -- | odoo)
         shift
         if [[ "$1" == "scaffold" ]] ; then
-            exec odoo "$@"
+            exec /etc/odoo/odoo-bin "$@"
         else
-            exec odoo "$@" "${DB_ARGS[@]}"
+            exec /etc/odoo/odoo-bin "$@" "${DB_ARGS[@]}"
         fi
         ;;
     -*)
-        exec odoo "$@" "${DB_ARGS[@]}"
+        exec /etc/odoo/odoo-bin "$@" "${DB_ARGS[@]}"
         ;;
     *)
         exec "$@"

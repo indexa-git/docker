@@ -8,6 +8,26 @@ ENV LANG C.UTF-8
 RUN set -x; \
         apt-get update \
         && apt-get install -y --no-install-recommends \
+            build-essential \
+            bzip2 \
+            libgeoip-dev \
+            libmaxminddb-dev \
+            python3-dev \
+            libevent-dev \
+            libssl-dev \
+            lxml \
+            libxml2-dev \
+            libxslt1-dev \
+            libjpeg-dev \
+            libfreetype6-dev \
+            liblcms2-dev \
+            libtiff5-dev \
+            tk-dev \
+            tcl-dev \
+            psutil \
+            linux-headers-amd64 \
+            libldap2-dev \
+            libsasl2-dev \
             ca-certificates \
             curl \
             dirmngr \
@@ -22,12 +42,31 @@ RUN set -x; \
             python3-setuptools \
             python3-vobject \
             python3-watchdog \
+            python-websocket \
             xz-utils \
         && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
         && echo '7e35a63f9db14f93ec7feeb0fce76b30c08f2057 wkhtmltox.deb' | sha1sum -c - \
         && dpkg --force-depends -i wkhtmltox.deb\
         && apt-get -y install -f --no-install-recommends \
         && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+
+# Grab run deps
+RUN set -x; \
+    apt-get -qq update && apt-get -qq install -y --no-install-recommends \
+    apt-transport-https \
+    gnupg2 \
+    locales \
+    fontconfig \
+    libjpeg62-turbo \
+    liblcms2-2 \
+    libldap-2.4-2 \
+    libsasl2-2 \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    libxslt1.1 \
+    zlib1g \
+    zlibc
 
 # install latest postgresql-client
 RUN set -x; \
@@ -58,21 +97,15 @@ RUN set -x;\
 
 # Install Odoo
 ENV ODOO_VERSION 12.0
-ARG ODOO_RELEASE=20190424
-ARG ODOO_SHA=3885be6791b9b8c2a74115299e57213c71db4363
-RUN set -x; \
-        curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
-        && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
-        && dpkg --force-depends -i odoo.deb \
-        && apt-get update \
-        && apt-get -y install -f --no-install-recommends \
-        && rm -rf /var/lib/apt/lists/* odoo.deb
+ENV ODOO_BASEPATH /etc/odoo
+RUN git clone --depth=1 -b ${ODOO_VERSION} https://github.com/odoo/odoo.git ${ODOO_BASEPATH}
+RUN pip install -r ${ODOO_BASEPATH}/requirements.txt
 
 # Copy entrypoint script and Odoo configuration file
 RUN pip3 install num2words xlwt
 COPY ./entrypoint.sh /
-COPY ./odoo.conf /etc/odoo/
-RUN chown odoo /etc/odoo/odoo.conf
+COPY ./odoo.conf /etc
+RUN chown odoo /etc/odoo.conf
 
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN mkdir -p /mnt/extra-addons \
@@ -83,7 +116,7 @@ VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
 EXPOSE 8069 8071
 
 # Set the default config file
-ENV ODOO_RC /etc/odoo/odoo.conf
+ENV ODOO_RC /etc/odoo.conf
 
 # Set default user when running the container
 USER odoo
