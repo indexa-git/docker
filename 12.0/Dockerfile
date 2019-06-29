@@ -110,7 +110,7 @@ RUN addgroup --system ${ODOO_USER}
 RUN adduser --system --ingroup ${ODOO_USER} --home ${ODOO_BASEPATH} --disabled-login --shell /sbin/nologin ${ODOO_USER}
 
 # Copy entrypoint script and Odoo configuration file
-RUN pip3 install num2words xlwt
+RUN pip3 install num2words xlwt websocket-client
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc
 RUN chown ${ODOO_USER} /etc/odoo.conf
