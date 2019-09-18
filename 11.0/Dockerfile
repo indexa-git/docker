@@ -89,6 +89,7 @@ ENV ODOO_VERSION 11.0
 ENV ODOO_BASEPATH /etc/odoo
 RUN git clone --depth=1 -b ${ODOO_VERSION} https://github.com/odoo/odoo.git ${ODOO_BASEPATH}
 RUN pip install -r ${ODOO_BASEPATH}/requirements.txt
+RUN pip install simplejson zeep>=3.2.0 python-stdnum>=1.11
 
 # Create odoo user and group
 ENV ODOO_USER odoo
