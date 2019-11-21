@@ -8,25 +8,6 @@ ENV LANG C.UTF-8
 RUN set -x; \
         apt-get update \
         && apt-get install -y --no-install-recommends \
-            ca-certificates \
-            curl \
-            dirmngr \
-            fonts-noto-cjk \
-            gnupg \
-            libssl-dev \
-            node-less \
-            npm \
-            python3-num2words \
-            python3-pip \
-            python3-phonenumbers \
-            python3-pyldap \
-            python3-qrcode \
-            python3-renderpm \
-            python3-setuptools \
-            python3-vobject \
-            python3-watchdog \
-            python3-xlwt \
-            xz-utils \
             build-essential \
             bzip2 \
             libgeoip-dev \
@@ -62,7 +43,8 @@ RUN set -x; \
             xz-utils \
         && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
         && echo '7e35a63f9db14f93ec7feeb0fce76b30c08f2057 wkhtmltox.deb' | sha1sum -c - \
-        && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
+        && dpkg --force-depends -i wkhtmltox.deb\
+        && apt-get -y install -f --no-install-recommends \
         && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Grab run deps
@@ -96,9 +78,19 @@ RUN set -x; \
         && apt-get install -y postgresql-client \
         && rm -rf /var/lib/apt/lists/*
 
-# Install rtlcss (on Debian buster)
-RUN set -x; \
-    npm install -g rtlcss
+# Install rtlcss (on Debian stretch)
+RUN set -x;\
+    echo "deb http://deb.nodesource.com/node_8.x stretch main" > /etc/apt/sources.list.d/nodesource.list \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && repokey='9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280' \
+    && gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "${repokey}" \
+    && gpg --armor --export "${repokey}" | apt-key add - \
+    && gpgconf --kill all \
+    && rm -rf "$GNUPGHOME" \
+    && apt-get update \
+    && apt-get install -y nodejs \
+    && npm install -g rtlcss \
+    && rm -rf /var/lib/apt/lists/*
 
 # Grab latest git            //-- to `pip install` customized python packages & apply patches
 RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends git-core
@@ -111,6 +103,11 @@ ENV ODOO_VERSION 13.0
 ENV ODOO_BASEPATH /etc/odoo
 RUN git clone --depth=1 -b ${ODOO_VERSION} https://github.com/odoo/odoo.git ${ODOO_BASEPATH}
 RUN pip install -r ${ODOO_BASEPATH}/requirements.txt
+
+# Create odoo user and group
+ENV ODOO_USER odoo
+RUN addgroup --system ${ODOO_USER}
+RUN adduser --system --ingroup ${ODOO_USER} --home ${ODOO_BASEPATH} --disabled-login --shell /sbin/nologin ${ODOO_USER}
 
 # Copy entrypoint script and Odoo configuration file
 RUN pip3 install num2words xlwt websocket-client openpyxl
