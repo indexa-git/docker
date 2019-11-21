@@ -27,10 +27,61 @@ RUN set -x; \
             python3-watchdog \
             python3-xlwt \
             xz-utils \
+            build-essential \
+            bzip2 \
+            libgeoip-dev \
+            libmaxminddb-dev \
+            python3-dev \
+            libevent-dev \
+            libssl-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libjpeg-dev \
+            libfreetype6-dev \
+            liblcms2-dev \
+            libtiff5-dev \
+            tk-dev \
+            tcl-dev \
+            linux-headers-amd64 \
+            libldap2-dev \
+            libsasl2-dev \
+            ca-certificates \
+            curl \
+            dirmngr \
+            fonts-noto-cjk \
+            gnupg \
+            node-less \
+            python3-pip \
+            python3-pyldap \
+            python3-qrcode \
+            python3-renderpm \
+            python3-setuptools \
+            python3-vobject \
+            python3-watchdog \
+            python-websocket \
+            xz-utils \
         && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
         && echo '7e35a63f9db14f93ec7feeb0fce76b30c08f2057 wkhtmltox.deb' | sha1sum -c - \
         && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
         && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+
+# Grab run deps
+RUN set -x; \
+    apt-get -qq update && apt-get -qq install -y --no-install-recommends \
+    apt-transport-https \
+    gnupg2 \
+    locales \
+    fontconfig \
+    libjpeg62-turbo \
+    liblcms2-2 \
+    libldap-2.4-2 \
+    libsasl2-2 \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    libxslt1.1 \
+    zlib1g \
+    zlibc
 
 # install latest postgresql-client
 RUN set -x; \
