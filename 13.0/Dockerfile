@@ -80,7 +80,7 @@ RUN set -x; \
 
 # Install rtlcss (on Debian stretch)
 
-RUN sudo apt-get install curl software-properties-common
+RUN apt-get install curl software-properties-common
 RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
 RUN set -x; \
     && apt-get update \
