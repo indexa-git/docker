@@ -79,18 +79,8 @@ RUN set -x; \
         && rm -rf /var/lib/apt/lists/*
 
 # Install rtlcss (on Debian stretch)
-RUN set -x;\
-    echo "deb http://deb.nodesource.com/node_8.x stretch main" > /etc/apt/sources.list.d/nodesource.list \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && repokey='9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280' \
-    && gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "${repokey}" \
-    && gpg --armor --export "${repokey}" | apt-key add - \
-    && gpgconf --kill all \
-    && rm -rf "$GNUPGHOME" \
-    && apt-get update \
-    && apt-get install -y nodejs \
-    && npm install -g rtlcss \
-    && rm -rf /var/lib/apt/lists/*
+RUN set -x; \
+    npm install -g rtlcss
 
 # Grab latest git            //-- to `pip install` customized python packages & apply patches
 RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends git-core
