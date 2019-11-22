@@ -81,7 +81,7 @@ RUN set -x; \
 # Install rtlcss (on Debian stretch)
 #RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN set -x; \
-    && apt-get update \
+    apt-get update \
     && apt-get install -y nodejs \
     npm install -g rtlcss
 
