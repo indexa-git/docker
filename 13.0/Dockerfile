@@ -83,7 +83,7 @@ RUN set -x; \
 RUN set -x; \
     apt-get update \
     && apt-get install -y nodejs \
-    npm install -g rtlcss
+    && npm install -g rtlcss
 
 # Grab latest git            //-- to `pip install` customized python packages & apply patches
 RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends git-core
