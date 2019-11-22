@@ -25,18 +25,18 @@ check_config "db_user" "$USER"
 check_config "db_password" "$PASSWORD"
 
 case "$1" in
-    -- | odoo | /etc/odoo/odoo-bin)
+    -- | /etc/odoo/odoo-bin)
         shift
         if [[ "$1" == "scaffold" ]] ; then
-            exec odoo "$@"
+            exec /etc/odoo/odoo-bin "$@"
         else
             wait-for-psql.py ${DB_ARGS[@]} --timeout=30
-            exec odoo | /etc/odoo/odoo-bin "$@" "${DB_ARGS[@]}"
+            exec etc/odoo/odoo-bin "$@" "${DB_ARGS[@]}"
         fi
         ;;
     -*)
         wait-for-psql.py ${DB_ARGS[@]} --timeout=30
-        exec odoo | /etc/odoo/odoo-bin "$@" "${DB_ARGS[@]}"
+        exec /etc/odoo/odoo-bin "$@" "${DB_ARGS[@]}"
         ;;
     *)
         exec "$@"
